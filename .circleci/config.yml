@@ -49,10 +49,7 @@ jobs:
           docker push maliknabek/myimage1:2.0 
 workflows:
   default:
-    jobs:
-      - build-frontend
-      workflows:
-  default:
+  
     jobs:
       - build-frontend
       - dockerizingq:
