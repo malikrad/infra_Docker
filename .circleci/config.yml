@@ -51,6 +51,10 @@ workflows:
   default:
     jobs:
       - build-frontend
-      #- dockerizingq:
-       # requires: [build-frontend]
+      workflows:
+  default:
+    jobs:
+      - build-frontend
+      - dockerizingq:
+          requires: [build-frontend]
       
