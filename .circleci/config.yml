@@ -16,7 +16,7 @@ jobs:
             #make clean all
             #make test
 
-  dockerizing:
+  dockerizingq:
     docker:
       - image: circleci/golang:1.15
         auth:
@@ -51,6 +51,6 @@ workflows:
   default:
     jobs:
       - build-frontend
-      - dockerizing:
+      - dockerizingq:
         requires: [build-frontend]
       
