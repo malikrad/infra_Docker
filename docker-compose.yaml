@@ -1,0 +1,42 @@
+---
+version: '3'
+services:
+  statics:
+    image: thoughtworkstask
+    build: .
+    ports:
+      - "8000:8000"
+    restart: always
+    working_dir: front-end/public/
+    entrypoint: ["python3", "serve.py"]
+  frontend:
+    image: thoughtworkstask
+    build: .
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      - APP_PORT=8080
+      - STATIC_URL=http://statics:8000
+      - QUOTE_SERVICE_URL=http://quotes:8081
+      - NEWSFEED_SERVICE_URL=http://newsfeed:8082
+      - NEWSFEED_SERVICE_TOKEN=T1&eWbYXNWG1w1^YGKDPxAWJ@^et^&kX
+    entrypoint: ["java", "-jar", "build/front-end.jar"]
+  quotes:
+    image: thoughtworkstask
+    build: .
+    ports:
+      - "8081:8081"
+    restart: always
+    environment:
+      - APP_PORT=8081
+    entrypoint: ["java", "-jar", "build/quotes.jar"]
+  newsfeed:
+    image: thoughtworkstask
+    build: .
+    ports:
+      - "8082:8082"
+    restart: always
+    environment:
+      - APP_PORT=8082
+    entrypoint: ["java", "-jar", "build/newsfeed.jar"]
