@@ -1,0 +1,83 @@
+version: 2.1
+
+jobs:
+  build-frontend:
+    docker:
+      - image: circleci/clojure:lein-2.8.1
+    steps:
+      - checkout
+      - run:
+          name: Build application
+          command: |
+            echo ${CIRCLE_WORKFLOW_ID:0:7}
+            sudo apt-get install make
+            make libs
+            make clean all
+            #make clean all
+            #make test
+
+  test-frontend:
+    docker:
+      - image: circleci/clojure:lein-2.8.1
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [build-frontend]
+      - run:
+          name: Build application
+          command: |
+            echo ${CIRCLE_WORKFLOW_ID:0:7}
+            #sudo apt-get install make
+            #make test
+  
+  #sends the built files to s3
+  deploy-Data:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: migrate new contents to the cloud
+          command: |
+            
+            cd .circleci/files
+            aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query "StackSummaries[].StackName" > stacks.txt
+
+            if grep "stackdata" stacks.txt; then
+            echo "stackdata found!"
+            #delete previous content from the bucket
+            aws s3 rb s3://content-700 --force
+            aws cloudformation delete-stack --stack-name "stackdata"
+            aws cloudformation wait stack-delete-complete \
+            --stack-name "stackdata"
+            fi
+            
+            aws cloudformation deploy \
+              --template-file s3.yml \
+              --stack-name "stackdata" \
+              --parameter-overrides ID="700"
+              
+              
+            #copy files to s3
+            cd ..
+            cd ..
+            aws s3 cp build "s3://content-700" --recursive
+            cd front-end
+            aws s3 cp public "s3://content-700" --recursive
+  
+ 
+               
+            
+workflows:
+  default:
+    jobs:
+      - build-frontend
+      - test-frontend:
+          requires: [build-frontend]
+      
+      
+           
+
+      
