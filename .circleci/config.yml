@@ -1,6 +1,6 @@
 version: 2.1
-
 jobs:
+
   build-frontend:
     docker:
       - image: circleci/clojure:lein-2.8.1
@@ -16,68 +16,41 @@ jobs:
             #make clean all
             #make test
 
-  test-frontend:
+  dockerizing:
     docker:
-      - image: circleci/clojure:lein-2.8.1
+      - image: circleci/golang:1.15
+        auth:
+          username: maliknabek
+          password: Italiawon7+++  # context / project UI env-var reference
     steps:
       - checkout
-      - restore_cache:
-          keys: [build-frontend]
+      # ... steps for building/testing app ...
       - run:
           name: Build application
           command: |
             echo ${CIRCLE_WORKFLOW_ID:0:7}
-            #sudo apt-get install make
-            #make test
-  
-  #sends the built files to s3
-  deploy-Data:
-    docker:
-      # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
-    steps:
-      # Checkout code from git
-      - checkout
-      - run:
-          name: migrate new contents to the cloud
-          command: |
-            
-            cd .circleci/files
-            aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query "StackSummaries[].StackName" > stacks.txt
+            sudo apt-get install make
+            make libs
+            make clean all
+            #make clean all
+            make test
 
-            if grep "stackdata" stacks.txt; then
-            echo "stackdata found!"
-            #delete previous content from the bucket
-            aws s3 rb s3://content-700 --force
-            aws cloudformation delete-stack --stack-name "stackdata"
-            aws cloudformation wait stack-delete-complete \
-            --stack-name "stackdata"
-            fi
-            
-            aws cloudformation deploy \
-              --template-file s3.yml \
-              --stack-name "stackdata" \
-              --parameter-overrides ID="700"
-              
-              
-            #copy files to s3
-            cd ..
-            cd ..
-            aws s3 cp build "s3://content-700" --recursive
-            cd front-end
-            aws s3 cp public "s3://content-700" --recursive
-  
- 
-               
-            
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
+
+      # build and push Docker image
+      - run: |
+          #TAG=0.1.$CIRCLE_BUILD_NUM
+          #docker build -t CircleCI-Public/circleci-demo-docker:$TAG .
+          #echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          #docker push CircleCI-Public/circleci-demo-docker:$TAG
+          docker tag farid:java-leiningen-python3 maliknabek/myimage1:2.0
+          docker push maliknabek/myimage1:2.0 
 workflows:
   default:
     jobs:
       - build-frontend
-      - test-frontend:
-          requires: [build-frontend]
-      
-      
-           
-
+      - dockerizing:
+        requires: [build-frontend]
       
