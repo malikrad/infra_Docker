@@ -28,15 +28,7 @@ jobs:
       - restore_cache:
           keys: [build-frontend]
       # ... steps for building/testing app ...
-      - run:
-          name: Build application
-          command: |
-            echo ${CIRCLE_WORKFLOW_ID:0:7}
-            sudo apt-get install make
-            make libs
-            make clean all
-            #make clean all
-            make test
+     
 
       - setup_remote_docker:
           version: 19.03.13
