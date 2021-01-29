@@ -48,6 +48,6 @@ workflows:
   
     jobs:
       
-      - dockerizingq:
+      - dockerizingq
           
       
