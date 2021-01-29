@@ -48,10 +48,10 @@ jobs:
             #docker-compose build
             #docker-compose up -d
             #curl http://localhost:8000
-            docker tag malik:newsfeedImage maliknabek/newsfeed:lts
-            docker tag malik:frontendImage maliknabek/frontend:lts
-            docker tag malik:quotesImage maliknabek/quotes:lts
-            docker tag malik:staticsImage maliknabek/statics:lts
+            docker tag task:newsfeedImage maliknabek/newsfeed:lts
+            docker tag task:frontendImage maliknabek/frontend:lts
+            docker tag task:quotesImage maliknabek/quotes:lts
+            docker tag task:staticsImage maliknabek/statics:lts
             docker login -u maliknabek -p Italiawon7+++
             docker push maliknabek/newsfeed:lts 
             docker push maliknabek/frontend:lts 
