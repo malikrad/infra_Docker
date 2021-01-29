@@ -16,7 +16,7 @@ jobs:
             #make clean all
             #make test
 
-  dockerizingq:
+  build_docker_image:
     docker:
       - image: circleci/golang:1.15
         #auth:
@@ -40,18 +40,46 @@ jobs:
           #echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           #docker push CircleCI-Public/circleci-demo-docker:$TAG
           docker-compose build
-          docker-compose up -d
-          curl http://localhost:8000
+          #docker-compose up -d
+          #curl http://localhost:8000
           docker tag farid:java-leiningen-python3 maliknabek/myimage1:2.0
           echo "completed........."
+          #docker login -u maliknabek -p Italiawon7+++
+          #docker push maliknabek/myimage1:2.0 
+          #curl http://localhost:8001
+  push_image_dockerhub:
+    docker:
+      - image: circleci/golang:1.15
+        #auth:
+          #username: maliknabek
+          #password:   # context / project UI env-var reference
+      - image: circleci/clojure:lein-2.8.1
+    steps:
+      - checkout
+      
+      # ... steps for building/testing app ...
+     
+
+      - setup_remote_docker:
+          version: 19.03.13
+          #docker_layer_caching: true
+
+      # build and push Docker image
+      - run: |
+          #TAG=0.1.$CIRCLE_BUILD_NUM
+          #docker build -t CircleCI-Public/circleci-demo-docker:$TAG .
+          #echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          #docker push CircleCI-Public/circleci-demo-docker:$TAG
+          docker tag farid:java-leiningen-python3 maliknabek/myimage1:2.0
           docker login -u maliknabek -p Italiawon7+++
-          docker push maliknabek/myimage1:2.0 
-          curl http://localhost:8001
+          docker push maliknabek/myimage2:2.0 
 workflows:
   default:
   
     jobs:
       
-      - dockerizingq
+      - build_docker_image
+      - push_image_dockerhub:
+          requires: [build_docker_image]
           
       
