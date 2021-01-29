@@ -17,7 +17,6 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          #!/bin/bash
           # Install docker
           apt-get update
           apt-get install -y apt-transport-https ca-certificates curl software-properties-common
@@ -36,15 +35,18 @@ Resources:
           aws s3 cp s3://content-700/Dockerfile.quotes .
           aws s3 cp s3://content-700/static .
           aws s3 cp s3://content-700/docker-compose.yaml .
-          docker pull maliknabek/thoughtworks_newsfeed2:2.0
-          docker pull maliknabek/thoughtworks_frontend2:2.0
-          docker pull maliknabek/thoughtworks_quotes2:2.0
-          docker pull maliknabek/thoughtworks_statics2:2.0
-          docker container run --name statics -p 8000:8000 maliknabek/thoughtworks_statics2:2.0
-          docker container run --name frontend -p 8080:8080 maliknabek/thoughtworks_frontend2:2.0
-          docker container run --name quotes -p 8081:8081 maliknabek/thoughtworks_quotes2:2.0
-          docker container run --name newsfeed -p 8082:8082 maliknabek/thoughtworks_newsfeed2:2.0
+
+          docker pull maliknabek/newsfeed:lts
+          docker pull maliknabek/frontend:lts
+          docker pull maliknabek/quotes:lts
+          docker pull maliknabek/statics:lts
+          docker tag maliknabek/newsfeed:lts task:newsfeedImage
+          docker tag maliknabek/frontend:lts task:frontendImage
+          docker tag maliknabek/quotes:lts task:quotesImage
+          docker tag maliknabek/statics:lts task:staticsImage
+          apt install docker-compose -y
           docker-compose up -d
+          
           
           
       ImageId: ami-0ac73f33a1888c64a
