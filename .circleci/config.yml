@@ -25,8 +25,7 @@ jobs:
       - image: circleci/clojure:lein-2.8.1
     steps:
       - checkout
-      - restore_cache:
-          keys: [build-frontend]
+      
       # ... steps for building/testing app ...
      
 
@@ -42,6 +41,7 @@ jobs:
           #docker push CircleCI-Public/circleci-demo-docker:$TAG
           docker-compose up --build
           docker tag farid:java-leiningen-python3 maliknabek/myimage1:2.0
+          echo "completed........."
           docker push maliknabek/myimage1:2.0 
 workflows:
   default:
