@@ -60,6 +60,75 @@ jobs:
             docker push maliknabek/statics:lts 
             #curl http://localhost:8001
           
+    #sends the built files to s3
+  deploy-Data:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: migrate new contents to the cloud
+          command: |
+            
+            cd .circleci/files
+            aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query "StackSummaries[].StackName" > stacks.txt
+
+            if grep "stackdata" stacks.txt; then
+            echo "stackdata found!"
+            #delete previous content from the bucket
+            aws s3 rb s3://content-700 --force
+            aws cloudformation delete-stack --stack-name "stackdata"
+            aws cloudformation wait stack-delete-complete \
+            --stack-name "stackdata"
+            fi
+            
+            aws cloudformation deploy \
+              --template-file s3.yml \
+              --stack-name "stackdata" \
+              --parameter-overrides ID="700"
+              
+              
+            #copy files to s3
+            cd ..
+            cd ..
+            aws s3 cp Dockerfile.frontend "s3://content-700"
+            aws s3 cp Dockerfile.quotes "s3://content-700" 
+            aws s3 cp Dockerfile.static "s3://content-700"
+            aws s3 cp Dockerfile.newsfeed "s3://content-700"
+            aws s3 cp docker-compose.yaml "s3://content-700"
+  
+  #deploy and provision the whole infrustructure (VPC, private subnets, public subnets, interneet gateway, NATs, EC2s, security groups, Autoscaling groups.....)
+  #EC2s configured using cloudformation User Data
+  deploy-Infrastructure:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: deploy and provision resources, configuration done directly in EC2 user data
+          command: |
+            
+            cd .circleci/files
+            chmod +x create.sh
+            aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query "StackSummaries[].StackName" > stacks.txt
+
+            if grep "infrastructure" stacks.txt; then
+            #delete old stack
+            echo "infrastructure stack found!"
+            aws cloudformation delete-stack --stack-name "infrastructure"
+            aws cloudformation wait stack-delete-complete \
+            --stack-name "infrastructure"
+            fi
+            # create new infrastructure stack
+            ./create.sh infrastructure infrastructure.yml infrastructure-parameters.json
+            aws cloudformation wait stack-create-complete --stack-name "infrastructure"
+             
+            # insert info of resources
+            aws cloudformation list-exports > outputs.txt
   
 workflows:
   default:
@@ -67,6 +136,8 @@ workflows:
     jobs:
       
       - dockernizing
+      - deploy-Data:
+          requires: [dockernizing]
     
           
       
