@@ -39,10 +39,10 @@ jobs:
           #docker build -t CircleCI-Public/circleci-demo-docker:$TAG .
           #echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           #docker push CircleCI-Public/circleci-demo-docker:$TAG
-          docker-compose up --build
-          #docker tag farid:java-leiningen-python3 maliknabek/myimage1:2.0
+          docker-compose build
+          docker tag farid:java-leiningen-python3 maliknabek/myimage1:2.0
           echo "completed........."
-          #docker push maliknabek/myimage1:2.0 
+          docker push maliknabek/myimage1:2.0 
 workflows:
   default:
   
