@@ -1,42 +1,42 @@
 ---
 version: '3'
 services:
-  statics:
-    image: thoughtworkstask
+  assets:
+    image: farid:java-leiningen-python3
     build: .
     ports:
       - "8000:8000"
     restart: always
-    working_dir: front-end/public/
+    working_dir: /usr/src/myapp/front-end/public/
     entrypoint: ["python3", "serve.py"]
   frontend:
-    image: thoughtworkstask
+    image: farid:java-leiningen-python3
     build: .
     ports:
-      - "8080:8080"
+      - "8001:8001"
     restart: always
     environment:
-      - APP_PORT=8080
-      - STATIC_URL=http://statics:8000
-      - QUOTE_SERVICE_URL=http://quotes:8081
-      - NEWSFEED_SERVICE_URL=http://newsfeed:8082
+      - APP_PORT=8001
+      - STATIC_URL=http://assets:8000
+      - QUOTE_SERVICE_URL=http://quotes:8002
+      - NEWSFEED_SERVICE_URL=http://newsfeed:8003
       - NEWSFEED_SERVICE_TOKEN=T1&eWbYXNWG1w1^YGKDPxAWJ@^et^&kX
-    entrypoint: ["java", "-jar", "build/front-end.jar"]
+    entrypoint: ["java", "-jar", "/usr/src/myapp/build/front-end.jar"]
   quotes:
-    image: thoughtworkstask
+    image: farid:java-leiningen-python3
     build: .
     ports:
-      - "8081:8081"
+      - "8002:8002"
     restart: always
     environment:
-      - APP_PORT=8081
-    entrypoint: ["java", "-jar", "build/quotes.jar"]
+      - APP_PORT=8002
+    entrypoint: ["java", "-jar", "/usr/src/myapp/build/quotes.jar"]
   newsfeed:
-    image: thoughtworkstask
+    image: farid:java-leiningen-python3
     build: .
     ports:
-      - "8082:8082"
+      - "8003:8003"
     restart: always
     environment:
-      - APP_PORT=8082
-    entrypoint: ["java", "-jar", "build/newsfeed.jar"]
+      - APP_PORT=8003
+    entrypoint: ["java", "-jar", "/usr/src/myapp/build/newsfeed.jar"]
