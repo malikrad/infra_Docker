@@ -71,7 +71,7 @@ jobs:
           name: migrate new contents to the cloud
           command: |
             
-            cd .circleci/files
+            cd .circleci/file
             aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query "StackSummaries[].StackName" > stacks.txt
 
             if grep "stackdata" stacks.txt; then
@@ -111,7 +111,7 @@ jobs:
           name: deploy and provision resources, configuration done directly in EC2 user data
           command: |
             
-            cd .circleci/files
+            cd .circleci/file
             chmod +x create.sh
             aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query "StackSummaries[].StackName" > stacks.txt
 
