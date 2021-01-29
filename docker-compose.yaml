@@ -3,7 +3,7 @@ version: '3'
 services:
 
   static:
-    image: malik:staticsImage
+    image: task:staticsImage
     build: 
       context: . 
       dockerfile: Dockerfile.static
@@ -16,7 +16,7 @@ services:
     command: ./front-end/public/serve.py
 
   quotes:
-    image: malik:quotesImage
+    image: task:quotesImage
     build:
       context: .
       dockerfile: Dockerfile.quotes
@@ -28,7 +28,7 @@ services:
 
 
   newsfeed:
-    image: malik:newsfeedImage
+    image: task:newsfeedImage
     build:
       context: .
       dockerfile: Dockerfile.newsfeed
@@ -40,7 +40,7 @@ services:
 
 
   frontend:
-    image: malik:frontendImage
+    image: task:frontendImage
     build:
       context: .
       dockerfile: Dockerfile.frontend
