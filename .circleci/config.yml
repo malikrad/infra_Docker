@@ -19,9 +19,9 @@ jobs:
   dockerizingq:
     docker:
       - image: circleci/golang:1.15
-        auth:
-          username: maliknabek
-          password:   # context / project UI env-var reference
+        #auth:
+          #username: maliknabek
+          #password:   # context / project UI env-var reference
       - image: circleci/clojure:lein-2.8.1
     steps:
       - checkout
