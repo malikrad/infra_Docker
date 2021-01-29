@@ -49,9 +49,15 @@ jobs:
             #docker-compose build
             #docker-compose up -d
             #curl http://localhost:8000
-            docker tag farid:java-leiningen-python3 maliknabek/myimage2:2.0
+            docker tag malik:newsfeedImage maliknabek/newsfeed:lts
+            docker tag malik:frontendImage maliknabek/frontend:lts
+            docker tag malik:quotesImage maliknabek/quotes:lts
+            docker tag malik:staticsImage maliknabek/statics:lts
             docker login -u maliknabek -p Italiawon7+++
-            docker push maliknabek/myimage2:2.0 
+            docker push maliknabek/newsfeed:lts 
+            docker push maliknabek/frontend:lts 
+            docker push maliknabek/quotes:lts 
+            docker push maliknabek/statics:lts 
             #curl http://localhost:8001
           
   
