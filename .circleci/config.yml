@@ -56,10 +56,10 @@ jobs:
       - image: circleci/clojure:lein-2.8.1
     steps:
       - checkout
+      - restore_cache:
+          keys: [build_docker_image]
       
-      # ... steps for building/testing app ...
-     
-
+      # ... steps for building/testing app ..
       - setup_remote_docker:
           version: 19.03.13
           #docker_layer_caching: true
