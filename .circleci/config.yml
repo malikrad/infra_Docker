@@ -134,9 +134,9 @@ workflows:
   
     jobs:
       
-      - dockernizing
-      - deploy-Data:
-          requires: [dockernizing]
+      #- dockernizing
+      - deploy-Data#:
+          #requires: [dockernizing]
     
           
       
