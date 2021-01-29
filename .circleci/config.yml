@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  build-frontend:
+  build-test:
     docker:
       - image: circleci/clojure:lein-2.8.1
     steps:
@@ -13,8 +13,12 @@ jobs:
             sudo apt-get install make
             make libs
             make clean all
-            #make clean all
-            #make test
+
+      - run:
+          name: test application
+          command: |
+            make test
+            
 
   dockernizing:
     docker:
@@ -27,8 +31,6 @@ jobs:
       - checkout
       
       # ... steps for building/testing app ...
-     
-
       - setup_remote_docker:
           version: 19.03.13
           #docker_layer_caching: true
@@ -138,17 +140,35 @@ jobs:
              
             # insert info of resources
             aws cloudformation list-exports > outputs.txt
-  
+            
+  test-infrastructure:
+      docker:
+        - image: circleci/clojure:lein-2.8.1
+      steps:
+        - checkout
+        - run:
+            name: Build application
+            command: |
+              echo "wait 4 minutes until the ec2 instances are healty"
+              sleep 4m
+              
+
+        - run:
+            name: test application
+            command: |
+              make test 
+ 
 workflows:
   default:
   
     jobs:
-      
-      #- dockernizing
-      #- deploy-Data:
-      #    requires: [dockernizing]
-      - deploy-Infrastructure
-          #requires: [deploy-Data]
+      - build-test
+      - dockernizing:
+          requires: [build-test]
+      - deploy-Data:
+          requires: [dockernizing]
+      - deploy-Infrastructure:
+          requires: [deploy-Data]
     
           
       
