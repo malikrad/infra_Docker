@@ -44,23 +44,16 @@ jobs:
       - run:
           name: push docker image
           command: |
-            #TAG=0.1.$CIRCLE_BUILD_NUM
-            #docker build -t CircleCI-Public/circleci-demo-docker:$TAG .
-            #echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-            #docker push CircleCI-Public/circleci-demo-docker:$TAG
-            #docker-compose build
-            #docker-compose up -d
             #curl http://localhost:8000
-            docker tag task:newsfeedImage maliknabek/newsfeed:lts
-            docker tag task:frontendImage maliknabek/frontend:lts
-            docker tag task:quotesImage maliknabek/quotes:lts
-            docker tag task:staticsImage maliknabek/statics:lts
-            docker login -u maliknabek -p Italiawon7+++
-            docker push maliknabek/newsfeed:lts 
-            docker push maliknabek/frontend:lts 
-            docker push maliknabek/quotes:lts 
-            docker push maliknabek/statics:lts 
-            #curl http://localhost:8001
+            docker tag task:newsfeedImage $USERNAME/newsfeed:lts
+            docker tag task:frontendImage $USERNAME/frontend:lts
+            docker tag task:quotesImage $USERNAME/quotes:lts
+            docker tag task:staticsImage $USERNAME/statics:lts
+            docker login -u $USERNAME -p $PASSWORD
+            docker push $USERNAME/newsfeed:lts 
+            docker push $USERNAME/frontend:lts 
+            docker push $USERNAME/quotes:lts 
+            docker push $USERNAME/statics:lts 
           
     #sends the built files to s3
   deploy-Data:
