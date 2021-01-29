@@ -42,7 +42,7 @@ jobs:
           docker-compose build
           docker tag farid:java-leiningen-python3 maliknabek/myimage1:2.0
           echo "completed........."
-          docker login --username=maliknabek --email=youremail@company.com
+          docker login -u maliknabek -p Italiawon7+++
           docker push maliknabek/myimage1:2.0 
 workflows:
   default:
