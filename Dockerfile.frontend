@@ -1,0 +1,14 @@
+FROM ubuntu:18.04
+RUN apt-get update && apt-get install -y  openjdk-8-jdk python3  curl wget make python3-pip  
+RUN wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein && chmod +x lein && mv lein /usr/local/bin && lein -v 
+WORKDIR /app
+COPY . . 
+RUN make libs
+RUN make clean all
+EXPOSE 8080
+ENV APP_PORT=8080
+ENV STATIC_URL=54.164.111.69:8000
+ENV QUOTE_SERVICE_URL=54.164.111.69:8081
+ENV NEWSFEED_SERVICE_URL=54.164.111.69:8082
+ENV NEWSFEED_SERVICE_TOKEN=T1&eWbYXNWG1w1^YGKDPxAWJ@^et^&kX
+CMD java -jar /app/build/front-end.jar

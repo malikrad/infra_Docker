@@ -1,42 +1,54 @@
----
 version: '3'
+
 services:
-  assets:
-    image: farid:java-leiningen-python3
-    build: .
-    ports:
-      - "8000:8000"
-    restart: always
-    working_dir: /usr/src/myapp/front-end/public/
-    entrypoint: ["python3", "serve.py"]
-  frontend:
-    image: farid:java-leiningen-python3
-    build: .
-    ports:
-      - "8001:8001"
-    restart: always
+
+  static:
+    image: malik:staticsImage
+    build: 
+      context: . 
+      dockerfile: Dockerfile.static
     environment:
-      - APP_PORT=8001
-      - STATIC_URL=http://assets:8000
-      - QUOTE_SERVICE_URL=http://quotes:8002
-      - NEWSFEED_SERVICE_URL=http://newsfeed:8003
-      - NEWSFEED_SERVICE_TOKEN=T1&eWbYXNWG1w1^YGKDPxAWJ@^et^&kX
-    entrypoint: ["java", "-jar", "/usr/src/myapp/build/front-end.jar"]
+      - APP_PORT=8000
+    ports:
+      - 8000:8000
+    restart: always
+    #network_mode: host
+    command: ./front-end/public/serve.py
+
   quotes:
-    image: farid:java-leiningen-python3
-    build: .
-    ports:
-      - "8002:8002"
-    restart: always
+    image: malik:quotesImage
+    build:
+      context: .
+      dockerfile: Dockerfile.quotes
     environment:
-      - APP_PORT=8002
-    entrypoint: ["java", "-jar", "/usr/src/myapp/build/quotes.jar"]
+      - APP_PORT=8081
+    ports:
+      - 8081:8081
+    restart: always
+
+
   newsfeed:
-    image: farid:java-leiningen-python3
-    build: .
-    ports:
-      - "8003:8003"
-    restart: always
+    image: malik:newsfeedImage
+    build:
+      context: .
+      dockerfile: Dockerfile.newsfeed
     environment:
-      - APP_PORT=8003
-    entrypoint: ["java", "-jar", "/usr/src/myapp/build/newsfeed.jar"]
+      - APP_PORT=8082
+    ports:
+      - 8082:8082
+    restart: always
+
+
+  frontend:
+    image: malik:frontendImage
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    environment:
+      - APP_PORT=8080
+      - STATIC_URL=http://static:8000
+      - QUOTE_SERVICE_URL=http://quotes:8081
+      - NEWSFEED_SERVICE_URL=http://newsfeed:8082
+    ports:
+      - 8080:8080
+    restart: always
