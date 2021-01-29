@@ -114,17 +114,27 @@ jobs:
             cd .circleci/file
             chmod +x create.sh
             aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query "StackSummaries[].StackName" > stacks.txt
-
-            if grep "infrastructure" stacks.txt; then
-            #delete old stack
-            echo "infrastructure stack found!"
-            aws cloudformation delete-stack --stack-name "infrastructure"
-            aws cloudformation wait stack-delete-complete \
-            --stack-name "infrastructure"
+            
+            if grep "network" stacks.txt; then
+            #network already created
+            echo "network stack found!"
+            else
+              ./create.sh network network.yml network-parameters.json
+              aws cloudformation wait stack-create-complete --stack-name "network"
+              aws cloudformation wait stack-delete-complete \
+              --stack-name "network"
             fi
-            # create new infrastructure stack
-            ./create.sh infrastructure infrastructure.yml infrastructure-parameters.json
-            aws cloudformation wait stack-create-complete --stack-name "infrastructure"
+            
+            if grep "servers" stacks.txt; then
+            #delete old stack
+            echo "servers stack found! and will be deleted"
+            aws cloudformation delete-stack --stack-name "servers"
+            aws cloudformation wait stack-delete-complete \
+            --stack-name "servers"
+            fi
+            # create new servers stack
+            ./create.sh servers servers.yml servers-parameters.json
+            aws cloudformation wait stack-create-complete --stack-name "servers"
              
             # insert info of resources
             aws cloudformation list-exports > outputs.txt
@@ -134,9 +144,11 @@ workflows:
   
     jobs:
       
-      #- dockernizing
-      - deploy-Data
-          #requires: [dockernizing]
+      - dockernizing
+      - deploy-Data:
+          requires: [dockernizing]
+      - deploy-Infrastructure:
+          requires: [deploy-Data]
     
           
       
