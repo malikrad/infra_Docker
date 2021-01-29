@@ -45,7 +45,7 @@ jobs:
           echo "completed........."
           docker login -u maliknabek -p Italiawon7+++
           docker push maliknabek/myimage1:2.0 
-          curl http://localhost:8080
+          curl http://localhost:8001
 workflows:
   default:
   
