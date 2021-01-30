@@ -137,11 +137,6 @@ jobs:
         - image: amazon/aws-cli:2.0.6
       steps:
         - checkout
-        - run: 
-            name:
-            command: |
-              scripts/shell_script_that_calls_tox_test_runner.sh
-
         - run:
             name: curl LoadBalancer
             command: |
