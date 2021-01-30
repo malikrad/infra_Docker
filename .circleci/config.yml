@@ -150,15 +150,15 @@ workflows:
   default:
   
     jobs:
-      #- build-test
-      #- dockernizing:
-          #requires: [build-test]
-      #- deploy-Data:
-          #requires: [dockernizing]
-      #- deploy-Infrastructure:
-          #requires: [deploy-Data]
+      - build-test
+      - dockernizing:
+          requires: [build-test]
+      - deploy-Data:
+          requires: [dockernizing]
+      - deploy-Infrastructure:
+          requires: [deploy-Data]
       - test-infrastructure
-          #requires: [deploy-Infrastructure]
+          requires: [deploy-Infrastructure]
           
     
           
