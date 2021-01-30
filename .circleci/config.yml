@@ -145,14 +145,25 @@ jobs:
               #get DNS of the load balancer
               export URL=$(aws elbv2 describe-load-balancers --names MyLoadBalancer --query 'LoadBalancers[*].DNSName' --output text)
               echo $URL
-              
-              if curl -I $URL 2>&1 | awk '/HTTP\// {print $2}' | grep "200"; then
-                #success
-                echo "success"
+              export SUCCES="0"
+              for ((n=0;n<15;n++))
+              do
+                  if curl -I $URL 2>&1 | awk '/HTTP\// {print $2}' | grep "200"; then
+                      #success
+                      export SUCCES="1" 
+                      echo "success"
+                      break
+                  fi
+              done
+
+              if [ "$SUCCES"=="1" ]; then
+                  #success
+                  echo "success"
               else
-                #failed
-                scripts/shell_script_that_calls_tox_test_runner.sh
-              fi         
+                  #failed
+                  echo "failed"
+                  scripts/shell_script_that_calls_tox_test_runner.sh    
+              fi     
  
 workflows:
   default:
