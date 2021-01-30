@@ -145,8 +145,10 @@ jobs:
               #get DNS of the load balancer
               export URL=$(aws elbv2 describe-load-balancers --names MyLoadBalancer --query 'LoadBalancers[*].DNSName' --output text)
               echo $URL
-              export SUCCES_CODE="200"
-              if [curl -I $URL 2>&1 | awk '/HTTP\// {print $2}' ==$SUCCES_CODE]
+              export code=curl -I $URL 2>&1 | awk '/HTTP\// {print $2}'
+              #[curl -I $URL 2>&1 | awk '/HTTP\// {print $2}' ==$SUCCES_CODE]
+              
+              if [[ $code == 200 ]]
               then
                 #success
                 echo "success"
