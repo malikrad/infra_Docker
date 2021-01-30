@@ -157,7 +157,7 @@ workflows:
           requires: [dockernizing]
       - deploy-Infrastructure:
           requires: [deploy-Data]
-      - test-infrastructure
+      - test-infrastructure:
           requires: [deploy-Infrastructure]
           
     
