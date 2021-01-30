@@ -19,33 +19,34 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          sudo apt-get update -y 
-          sudo apt -y install default-jre 
-          sudo apt -y install default-jdk 
-          sudo apt-get install unzip awscli -y 
+          apt-get update
+          apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          add-apt-repository \
+          "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+          $(lsb_release -cs) \
+          stable"
+          apt-get update
+          apt-get install -y docker-ce
+          usermod -aG docker ubuntu
+          sudo apt-get install unzip awscli -y
           cd /home
-          aws s3 cp s3://content-700/front-end.jar . 
-          aws s3 cp s3://content-700/newsfeed.jar .
-          aws s3 cp s3://content-700/quotes.jar .
-          aws s3 cp s3://content-700/serve.py .
-          aws s3 cp s3://content-700/static.tgz .
-          tar -xvzf static.tgz
-          export APP_PORT=8080 >> /etc/profile 
-          export STATIC_URL="http://localhost:8000">> /etc/profile 
-          export QUOTE_SERVICE_URL="http://localhost:8081" >> /etc/profile 
-          export NEWSFEED_SERVICE_URL="http://localhost:8082" >> /etc/profile 
-          export NEWSFEED_SERVICE_TOKEN="T1&eWbYXNWG1w1^YGKDPxAWJ@^et^&kX" >> /etc/profile 
-          java -jar front-end.jar & 
-          export APP_PORT=8081 >> /etc/profile 
-          nohup java -jar quotes.jar & 
-          export APP_PORT=8082 >> /etc/profile 
-          nohup java -jar newsfeed.jar & 
-          nohup ./serve.py & 
-          #sudo apt-get install apache2 -y 
-          #sudo systemctl start apache2.service 
-          #cd ..
-          #cd /var/www/html
-          echo "Demo scriptuserdata Web Server Up and Runninggfgfgfgfgfgfgfgfgf!" > index.html
+          aws s3 cp s3://content-700/Dockerfile.frontend .
+          aws s3 cp s3://content-700/Dockerfile.newsfeed .
+          aws s3 cp s3://content-700/Dockerfile.quotes .
+          aws s3 cp s3://content-700/static .
+          aws s3 cp s3://content-700/docker-compose.yaml .
+
+          docker pull maliknabek/newsfeed:lts
+          docker pull maliknabek/frontend:lts
+          docker pull maliknabek/quotes:lts
+          docker pull maliknabek/statics:lts
+          docker tag maliknabek/newsfeed:lts task:newsfeedImage
+          docker tag maliknabek/frontend:lts task:frontendImage
+          docker tag maliknabek/quotes:lts task:quotesImage
+          docker tag maliknabek/statics:lts task:staticsImage
+          apt install docker-compose -y
+          docker-compose up -d
           
           
       ImageId: ami-0ac73f33a1888c64a
