@@ -144,7 +144,8 @@ jobs:
               #sleep 4m
               #get DNS of the load balancer
               export URL=$(aws elbv2 describe-load-balancers --names MyLoadBalancer --query 'LoadBalancers[*].DNSName' --output text)
-              if curl -s ${URL} | grep "200"
+              echo $URL
+              if curl -I $URL 2>&1 | awk '/HTTP\// {print $2}' | grep 200
               then
                 #success
                 echo "success"
