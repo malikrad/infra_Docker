@@ -140,16 +140,13 @@ jobs:
       steps:
         - checkout
         - run:
-            name: Build application
+            name: curl LoadBalancer
             command: |
               echo "wait 4 minutes until the ec2 instances are healty"
               sleep 4m
-              
-
-        - run:
-            name: test application
-            command: |
-              make test 
+              #get DNS of the load balancer
+              export url=aws elbv2 describe-load-balancers --names MyLoadBalancer --query 'LoadBalancers[*].DNSName' --output text
+              curl url
  
 workflows:
   default:
@@ -162,6 +159,9 @@ workflows:
           requires: [dockernizing]
       - deploy-Infrastructure:
           requires: [deploy-Data]
+      - test-infrastructure:
+          requires: [deploy-Infrastructure]
+          
     
           
       
