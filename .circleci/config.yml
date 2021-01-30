@@ -134,14 +134,14 @@ jobs:
             
   test-infrastructure:
       docker:
-        - image: circleci/clojure:lein-2.8.1
+        - image: amazon/aws-cli
       steps:
         - checkout
         - run:
             name: curl LoadBalancer
             command: |
               echo "wait 4 minutes until the ec2 instances are healty"
-              sleep 4m
+              #sleep 4m
               #get DNS of the load balancer
               export url=aws elbv2 describe-load-balancers --names MyLoadBalancer --query 'LoadBalancers[*].DNSName' --output text
               curl url
@@ -150,15 +150,15 @@ workflows:
   default:
   
     jobs:
-      - build-test
-      - dockernizing:
-          requires: [build-test]
-      - deploy-Data:
-          requires: [dockernizing]
-      - deploy-Infrastructure:
-          requires: [deploy-Data]
-      - test-infrastructure:
-          requires: [deploy-Infrastructure]
+      #- build-test
+      #- dockernizing:
+          #requires: [build-test]
+      #- deploy-Data:
+          #requires: [dockernizing]
+      #- deploy-Infrastructure:
+          #requires: [deploy-Data]
+      - test-infrastructure
+          #requires: [deploy-Infrastructure]
           
     
           
