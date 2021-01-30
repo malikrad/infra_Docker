@@ -137,6 +137,11 @@ jobs:
         - image: amazon/aws-cli:2.0.6
       steps:
         - checkout
+        - run: 
+            name:
+            command: |
+              scripts/shell_script_that_calls_tox_test_runner.sh
+
         - run:
             name: curl LoadBalancer
             command: |
@@ -145,20 +150,21 @@ jobs:
               #get DNS of the load balancer
               export url=$(aws elbv2 describe-load-balancers --names MyLoadBalancer --query 'LoadBalancers[*].DNSName' --output text)
               curl $url
+         
  
 workflows:
   default:
   
     jobs:
-      - build-test
-      - dockernizing:
-          requires: [build-test]
-      - deploy-Data:
-          requires: [dockernizing]
-      - deploy-Infrastructure:
-          requires: [deploy-Data]
-      - test-infrastructure:
-          requires: [deploy-Infrastructure]
+      #- build-test
+      #- dockernizing:
+       #   requires: [build-test]
+      #- deploy-Data:
+       #   requires: [dockernizing]
+      #- deploy-Infrastructure:
+       #   requires: [deploy-Data]
+      - test-infrastructure
+       #   requires: [deploy-Infrastructure]
           
     
           
