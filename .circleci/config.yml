@@ -134,7 +134,7 @@ jobs:
             
   test-infrastructure:
       docker:
-        - image: amazon/aws-cli
+        - image: amazon/aws-cli:2.0.6
       steps:
         - checkout
         - run:
