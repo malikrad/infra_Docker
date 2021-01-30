@@ -146,11 +146,11 @@ jobs:
               export URL=$(aws elbv2 describe-load-balancers --names MyLoadBalancer --query 'LoadBalancers[*].DNSName' --output text)
               if curl -s ${URL} | grep "200"
               then
-                #failed
-                return 0
-              else
                 #success
-                return 1
+                echo "success"
+              else
+                #failed
+                scripts/shell_script_that_calls_tox_test_runner.sh
               fi         
  
 workflows:
