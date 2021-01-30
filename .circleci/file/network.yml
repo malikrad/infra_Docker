@@ -8,6 +8,10 @@ Parameters:
         Description: An environment name that will be prefixed to resource names
         Type: String
 
+    KeyPair:
+        Description: the name of pem file that will be used for JumpBox
+        Type: String
+
     VpcCIDR: 
         Description: Please enter the IP range (CIDR notation) for this VPC
         Type: String
@@ -296,6 +300,26 @@ Resources:
         SecurityGroups:
           - Ref: LBSecGroup
 
+    JumpBox:
+      Type: 'AWS::EC2::Instance'
+      Properties:
+        ImageId: ami-0ac73f33a1888c64a
+        KeyName: !Ref KeyPair
+        IamInstanceProfile: !Ref ProfileWithRolesForOurApp
+        InstanceType: t3.small
+        
+        SubnetId: !Ref PublicSubnet1
+        SecurityGroupIds:
+          - Ref: JumpBoxSecGroup
+        BlockDeviceMappings:
+          - DeviceName: "/dev/sdk"
+            Ebs:
+              VolumeSize: "10"
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            sudo apt update
+
 Outputs: 
 
     VPC: 
@@ -393,3 +417,9 @@ Outputs:
       Value: !GetAtt WebAppLB.DNSName
       Export:
         Name: !Sub ${EnvironmentName}-LOADBALANCERDNS
+
+    JumpBox:
+      Description: ip  address of the jump box
+      Value: !GetAtt JumpBox.PublicIp
+      Export:
+        Name: !Sub ${EnvironmentName}-JUMPBOXIP
