@@ -1,3 +1,4 @@
+
 FROM ubuntu:18.04
 RUN apt-get update && apt-get install -y  openjdk-8-jdk python3  curl wget make python3-pip  
 RUN wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein && chmod +x lein && mv lein /usr/local/bin && lein -v 
@@ -7,3 +8,4 @@ RUN make libs
 RUN make clean all 
 EXPOSE 8000 
 CMD ./front-end/public/serve.py
+
